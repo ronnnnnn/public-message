@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zyfz.dao.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.zyfz.domain.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="is_locked" property="isLocked" jdbcType="BIT" />
+    <result column="role_ids" property="roleIds" jdbcType="VARCHAR" />
+    <result column="organization" property="organization" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="user_identify" property="userIdentify" jdbcType="VARCHAR" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="street" property="street" jdbcType="VARCHAR" />
+    <result column="current_area" property="currentArea" jdbcType="VARCHAR" />
+    <result column="is_admin" property="isAdmin" jdbcType="BIT" />
+    <result column="is_new" property="isNew" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="account" property="account" jdbcType="DOUBLE" />
+    <result column="contribute_score" property="contributeScore" jdbcType="DOUBLE" />
+    <result column="honer_score" property="honerScore" jdbcType="DOUBLE" />
+    <result column="grade_total" property="gradeTotal" jdbcType="DOUBLE" />
+    <result column="grade_times" property="gradeTimes" jdbcType="INTEGER" />
+    <result column="withdraw_account" property="withdrawAccount" jdbcType="VARCHAR" />
+    <result column="wirhdraw_accont_type" property="wirhdrawAccontType" jdbcType="VARCHAR" />
+    <result column="regId" property="regid" jdbcType="VARCHAR" />
+    <result column="alias" property="alias" jdbcType="VARCHAR" />
+    <result column="topic" property="topic" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="photo" property="photo" jdbcType="VARCHAR" />
+    <result column="cookie" property="cookie" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="userRoleMap" type="com.zyfz.domain.User" extends="BaseResultMap">
+    <collection property="roles" ofType="com.zyfz.domain.Role">
+      <id column="groupid" property="id" jdbcType="INTEGER" />
+      <result column="role" property="role" jdbcType="VARCHAR" />
+      <result column="description" property="description" jdbcType="VARCHAR" />
+      <result column="resource_ids" property="resourceIds" jdbcType="VARCHAR" />
+      <result column="is_available" property="isAvailable" jdbcType="INTEGER" />
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, username, phone, password, salt, is_locked, role_ids, organization, nickname, 
+    real_name, user_identify,country,province,city, area,street, current_area, is_admin, is_new, create_time, account,
+    contribute_score, honer_score, grade_total, grade_times, withdraw_account, wirhdraw_accont_type, 
+    regId, alias, topic,email,photo,cookie,description
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hh_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPhone" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where phone = #{phone,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUsernameLike" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where username like #{0} and is_admin = #{1}
+  </select>
+
+  <select id="selectByPhoneLike" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where phone like #{0} and is_admin = #{1}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+  </select>
+
+  <select id="selectAllSuperUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where is_admin = 1
+  </select>
+
+  <select id="selectHonerOrder" resultMap="BaseResultMap">
+    select
+    id,username,grade_total,grade_times,honer_score,photo
+    from hh_user
+    where is_admin = 0 ORDER BY honer_score DESC
+  </select>
+
+  <select id="selectAllNormalUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where is_admin = 0
+  </select>
+
+  <select id="selectByCookie" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_user
+    where cookie = #{sessionId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hh_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.zyfz.domain.User" >
+    insert into hh_user (id, username, phone, 
+      password, salt, is_locked, 
+      role_ids, organization, nickname, 
+      real_name, user_identify, country,province,city, area,street,
+      current_area, is_admin, is_new, 
+      create_time, account, contribute_score, 
+      honer_score, grade_total, grade_times, 
+      withdraw_account, wirhdraw_accont_type, regId, 
+      alias, topic,email,photo,cookie,description)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{isLocked,jdbcType=BIT}, 
+      #{roleIds,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{realName,jdbcType=VARCHAR}, #{userIdentify,jdbcType=VARCHAR},#{country,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{street,jdbcType=VARCHAR},
+      #{currentArea,jdbcType=VARCHAR}, #{isAdmin,jdbcType=BIT}, #{isNew,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{account,jdbcType=DOUBLE}, #{contributeScore,jdbcType=DOUBLE}, 
+      #{honerScore,jdbcType=DOUBLE}, #{gradeTotal,jdbcType=DOUBLE}, #{gradeTimes,jdbcType=INTEGER},
+      #{withdrawAccount,jdbcType=VARCHAR}, #{wirhdrawAccontType,jdbcType=VARCHAR}, #{regid,jdbcType=VARCHAR}, 
+      #{alias,jdbcType=VARCHAR}, #{topic,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR}, #{cookie,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zyfz.domain.User" >
+    insert into hh_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="isLocked != null" >
+        is_locked,
+      </if>
+      <if test="roleIds != null" >
+        role_ids,
+      </if>
+      <if test="organization != null" >
+        organization,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+      <if test="realName != null" >
+        real_name,
+      </if>
+      <if test="userIdentify != null" >
+        user_identify,
+      </if>
+      <if test="country != null" >
+        country,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="street != null" >
+        street,
+      </if>
+      <if test="currentArea != null" >
+        current_area,
+      </if>
+      <if test="isAdmin != null" >
+        is_admin,
+      </if>
+      <if test="isNew != null" >
+        is_new,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="contributeScore != null" >
+        contribute_score,
+      </if>
+      <if test="honerScore != null" >
+        honer_score,
+      </if>
+      <if test="gradeTotal != null" >
+        grade_total,
+      </if>
+      <if test="gradeTimes != null" >
+        grade_times,
+      </if>
+      <if test="withdrawAccount != null" >
+        withdraw_account,
+      </if>
+      <if test="wirhdrawAccontType != null" >
+        wirhdraw_accont_type,
+      </if>
+      <if test="regid != null" >
+        regId,
+      </if>
+      <if test="alias != null" >
+        alias,
+      </if>
+      <if test="topic != null" >
+        topic,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="photo != null" >
+        photo,
+      </if>
+      <if test="cookie != null" >
+        cookie,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isLocked != null" >
+        #{isLocked,jdbcType=BIT},
+      </if>
+      <if test="roleIds != null" >
+        #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="organization != null" >
+        #{organization,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdentify != null" >
+        #{userIdentify,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="street != null" >
+        #{street,jdbcType=VARCHAR},
+      </if>
+      <if test="currentArea != null" >
+        #{currentArea,jdbcType=VARCHAR},
+      </if>
+      <if test="isAdmin != null" >
+        #{isAdmin,jdbcType=BIT},
+      </if>
+      <if test="isNew != null" >
+        #{isNew,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=DOUBLE},
+      </if>
+      <if test="contributeScore != null" >
+        #{contributeScore,jdbcType=DOUBLE},
+      </if>
+      <if test="honerScore != null" >
+        #{honerScore,jdbcType=DOUBLE},
+      </if>
+      <if test="gradeTotal != null" >
+        #{gradeTotal,jdbcType=DOUBLE},
+      </if>
+      <if test="gradeTimes != null" >
+        #{gradeTimes,jdbcType=INTEGER},
+      </if>
+      <if test="withdrawAccount != null" >
+        #{withdrawAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="wirhdrawAccontType != null" >
+        #{wirhdrawAccontType,jdbcType=VARCHAR},
+      </if>
+      <if test="regid != null" >
+        #{regid,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="cookie != null" >
+        #{cookie,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zyfz.domain.User" >
+    update hh_user
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isLocked != null" >
+        is_locked = #{isLocked,jdbcType=BIT},
+      </if>
+      <if test="roleIds != null" >
+        role_ids = #{roleIds,jdbcType=VARCHAR},
+      </if>
+      <if test="organization != null" >
+        organization = #{organization,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdentify != null" >
+        user_identify = #{userIdentify,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null" >
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="street != null" >
+        street = #{street,jdbcType=VARCHAR},
+      </if>
+      <if test="currentArea != null" >
+        current_area = #{currentArea,jdbcType=VARCHAR},
+      </if>
+      <if test="isAdmin != null" >
+        is_admin = #{isAdmin,jdbcType=BIT},
+      </if>
+      <if test="isNew != null" >
+        is_new = #{isNew,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=DOUBLE},
+      </if>
+      <if test="contributeScore != null" >
+        contribute_score = #{contributeScore,jdbcType=DOUBLE},
+      </if>
+      <if test="honerScore != null" >
+        honer_score = #{honerScore,jdbcType=DOUBLE},
+      </if>
+      <if test="gradeTotal != null" >
+        grade_total = #{gradeTotal,jdbcType=DOUBLE},
+      </if>
+      <if test="gradeTimes != null" >
+        grade_times = #{gradeTimes,jdbcType=INTEGER},
+      </if>
+      <if test="withdrawAccount != null" >
+        withdraw_account = #{withdrawAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="wirhdrawAccontType != null" >
+        wirhdraw_accont_type = #{wirhdrawAccontType,jdbcType=VARCHAR},
+      </if>
+      <if test="regid != null" >
+        regId = #{regid,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null" >
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="topic != null" >
+        topic = #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="photo != null" >
+        photo = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="cookie != null" >
+        cookie = #{cookie,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zyfz.domain.User" >
+    update hh_user
+    set username = #{username,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      is_locked = #{isLocked,jdbcType=BIT},
+      role_ids = #{roleIds,jdbcType=VARCHAR},
+      organization = #{organization,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      user_identify = #{userIdentify,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      street = #{street,jdbcType=VARCHAR},
+      current_area = #{currentArea,jdbcType=VARCHAR},
+      is_admin = #{isAdmin,jdbcType=BIT},
+      is_new = #{isNew,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      account = #{account,jdbcType=DOUBLE},
+      contribute_score = #{contributeScore,jdbcType=DOUBLE},
+      honer_score = #{honerScore,jdbcType=DOUBLE},
+      grade_total = #{gradeTotal,jdbcType=DOUBLE},
+      grade_times = #{gradeTimes,jdbcType=INTEGER},
+      withdraw_account = #{withdrawAccount,jdbcType=VARCHAR},
+      wirhdraw_accont_type = #{wirhdrawAccontType,jdbcType=VARCHAR},
+      regId = #{regid,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      topic = #{topic,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      photo = #{photo,jdbcType=VARCHAR},
+      cookie = #{cookie,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

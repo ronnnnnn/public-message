@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zyfz.dao.PublicMessageMapper" >
+  <resultMap id="BaseResultMap" type="com.zyfz.domain.PublicMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pm_title" property="pmTitle" jdbcType="VARCHAR" />
+    <result column="pm_content" property="pmContent" jdbcType="VARCHAR" />
+    <result column="pm_create_time" property="pmCreateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, pm_title, pm_content, pm_create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hh_public_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from hh_public_message ORDER BY pm_create_time DESC
+  </select>
+
+  <select id="selectByLimit" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    (select * from pm.hh_public_message limit #{size,jdbcType=INTEGER}) order by pm_create_time desc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hh_public_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.zyfz.domain.PublicMessage" >
+    insert into hh_public_message (id, pm_title, pm_content, 
+      pm_create_time)
+    values (#{id,jdbcType=INTEGER}, #{pmTitle,jdbcType=VARCHAR}, #{pmContent,jdbcType=VARCHAR}, 
+      #{pmCreateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zyfz.domain.PublicMessage" >
+    insert into hh_public_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pmTitle != null" >
+        pm_title,
+      </if>
+      <if test="pmContent != null" >
+        pm_content,
+      </if>
+      <if test="pmCreateTime != null" >
+        pm_create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pmTitle != null" >
+        #{pmTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pmContent != null" >
+        #{pmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="pmCreateTime != null" >
+        #{pmCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zyfz.domain.PublicMessage" >
+    update hh_public_message
+    <set >
+      <if test="pmTitle != null" >
+        pm_title = #{pmTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pmContent != null" >
+        pm_content = #{pmContent,jdbcType=VARCHAR},
+      </if>
+      <if test="pmCreateTime != null" >
+        pm_create_time = #{pmCreateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zyfz.domain.PublicMessage" >
+    update hh_public_message
+    set pm_title = #{pmTitle,jdbcType=VARCHAR},
+      pm_content = #{pmContent,jdbcType=VARCHAR},
+      pm_create_time = #{pmCreateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

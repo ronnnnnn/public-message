@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zyfz.dao.ShowMapper" >
+  <resultMap id="BaseResultMap" type="com.zyfz.domain.Show" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mname" property="mname" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="mtype" property="mtype" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="is_use" property="isUse" jdbcType="BIT" />
+    <result column="relate_url" property="relateUrl" jdbcType="VARCHAR" />
+    <result column="relate_article_title" property="relateArticleTitle" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, mname, image_url, create_time,mtype,sort,is_use,relate_url,relate_article_title
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hh_show
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPicType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from hh_show
+    where mtype = #{mtype,jdbcType=VARCHAR} and is_use = true order by sort desc
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from hh_show
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hh_show
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.zyfz.domain.Show" >
+    insert into hh_show (id, mname, image_url,
+      create_time,mtype,sort,is_use,relate_url,relate_article_title)
+    values (#{id,jdbcType=INTEGER}, #{mname,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP},#{mtype,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},#{isUse,jdbcType=BIT}, #{relateUrl,jdbcType=VARCHAR}, #{relateArticleTitle,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zyfz.domain.Show" >
+    insert into hh_show
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="mname != null" >
+        mname,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="mtype != null" >
+        mtype,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="isUse != null" >
+        is_use,
+      </if>
+      <if test="relateUrl != null" >
+        relate_url,
+      </if>
+      <if test="relateArticleTitle != null" >
+        relate_article_title,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mname != null" >
+        #{mname,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mtype != null" >
+        #{mtype,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="isUse != null" >
+        #{isUse,jdbcType=BIT},
+      </if>
+      <if test="relateUrl != null" >
+        #{relateUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="relateArticleTitle != null" >
+        #{relateArticleTitle,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.zyfz.domain.Show" >
+    update hh_show
+    <set >
+      <if test="mname != null" >
+        mname = #{mname,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mtype != null" >
+        mtype = #{mtype,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort =  #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="isUse != null" >
+        is_use = #{isUse,jdbcType=BIT},
+      </if>
+      <if test="relateUrl != null" >
+        relate_url = #{relateUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="relateArticleTitle != null" >
+        relate_article_title = #{relateArticleTitle,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zyfz.domain.Show" >
+    update hh_show
+    set mname = #{mname,jdbcType=VARCHAR},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      mtype = #{mtype,jdbcType=VARCHAR},
+      sort =  #{sort,jdbcType=INTEGER},
+      is_use = #{isUse,jdbcType=BIT},
+      relate_url = #{relateUrl,jdbcType=VARCHAR},
+      relate_article_title = #{relateArticleTitle,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
